@@ -35,7 +35,7 @@ def run():
         width, height = size.strip().split("x")
 
         webp_path = Path(out_path, f"{video.name.replace(".mp4", "")}.webp")
-        return_code = subprocess.run([
+        subprocess.run([
             ffmpeg_path,
             "-i", video,
             "-vcodec", "libwebp",
@@ -44,13 +44,11 @@ def run():
             "-loop", "0",
             "-preset", "default",
             "-an",
-            "-vsync", "0",
+            "-fps_mode", "passthrough",
             "-s", f"{width}:{height}",
             "-y", # overwrite
             webp_path
         ])
-
-        print(return_code)
 
         convered += 1
 
