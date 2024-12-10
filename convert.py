@@ -7,6 +7,7 @@ parser = argparse.ArgumentParser(
     description="batch convert mp4 to webp using ffmpeg"
 )
 parser.add_argument('--fps', default=25, required=False)
+parser.add_argument('--width', default=None, required=False)
 args = parser.parse_args()
 
 def run():
@@ -32,7 +33,19 @@ def run():
             "-of", "csv=s=x:p=0",
             video
         ], capture_output = True, text=True).stdout
-        width, height = size.strip().split("x")
+        i_width, i_height = size.strip().split("x")
+
+        o_width = i_width
+        o_height = i_height
+        if args.width is not None:
+            width = int(args.width)
+            i_width = float(i_width)
+            i_height = float(i_height)
+            
+            aspect = float(i_width) / float(i_height)
+            
+            o_width = width
+            o_height = int(o_width / aspect)
 
         webp_path = Path(out_path, f"{video.name.replace(".mp4", "")}.webp")
         subprocess.run([
@@ -45,7 +58,7 @@ def run():
             "-preset", "default",
             "-an",
             "-fps_mode", "passthrough",
-            "-s", f"{width}:{height}",
+            "-s", f"{o_width}:{o_height}",
             "-y", # overwrite
             webp_path
         ])
