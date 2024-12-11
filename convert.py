@@ -1,6 +1,7 @@
 import argparse
 from pathlib import Path
 import subprocess
+from glob import glob
 
 parser = argparse.ArgumentParser(
     prog="martin",
@@ -22,8 +23,10 @@ def run():
 
     convered = 0
 
-    videos = Path(".", "in").rglob('*.mp4')
+    videos = [p for p in in_path.rglob('*') if p.suffix in [".mp4", ".gif", ".mov"]]
     for video in videos:
+
+        name, _ = video.name.split(".")
 
         size = subprocess.run([
             ffprobe_path,
@@ -47,7 +50,7 @@ def run():
             o_width = width
             o_height = int(o_width / aspect)
 
-        webp_path = Path(out_path, f"{video.name.replace(".mp4", "")}.webp")
+        webp_path = Path(out_path, f"{name}.webp")
         subprocess.run([
             ffmpeg_path,
             "-i", video,
