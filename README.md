@@ -1,5 +1,5 @@
 # martin
-Batch converter from mp4 to webp
+Batch converter from mp4, gif, mov to webp
 
 # Setup
 
